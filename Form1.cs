@@ -7,16 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace CosmeticShop
 {
     public partial class Autorization : Form
     {
-        DataBase db = new DataBase();
+        DataBase db { get; set; }
 
         int counter;
 
-        public List<int> idList = new List<int>();
+        List<int> idList = new List<int>();
 
         List<PictureBox> mainImage = new List<PictureBox>();
 
@@ -32,12 +33,12 @@ namespace CosmeticShop
 
         List<int> idSearch = new List<int>();
 
-
         public Autorization()
         {
             InitializeComponent();
             FillIdlist();
             CreatePanel(idList);
+            new Autorization().db = new DataBase();
 
         }
 
@@ -164,7 +165,7 @@ namespace CosmeticShop
         {
             
             var pb = (PictureBox)sender;
-            Product prd = db.Product.Find(idSearch[Convert.ToInt32(pb.Name)]);
+            Product prd = db.Product.Find(idList[Convert.ToInt32(pb.Name)]);
             counter = 1 + allImageList[Convert.ToInt32(pb.Name)].Count;
             double areaChange = pb.Width / counter;
             for (int i = 0; i < counter; i++)
@@ -172,27 +173,22 @@ namespace CosmeticShop
                 if (MousePosition.X >= this.Left + pb.Location.X + areaChange * i - 1
                     && MousePosition.X <= this.Location.X + pb.Location.X + areaChange * (i + 1) + 1)
                 {
+                    checkList[Convert.ToInt32(pb.Name)][i].BackColor = Color.FromArgb(255, 74, 109);
                     if (i == 0)
                     {
                         pb.BackgroundImage = Image.FromFile($@"..\..\{prd.MainImagePath}");
+                        
                     }
                     else
                     {
                         pb.BackgroundImage = Image.FromFile($@"..\..\{allImageList[Convert.ToInt32(pb.Name)][i-1]}");
+
                     }
 
-                    pb.BackgroundImageLayout = ImageLayout.Stretch;
-                    for (int j = 0; j < counter; j++)
-                    {
-                        if (j == i)
-                        {
-                            checkList[Convert.ToInt32(pb.Name)][j].BackColor = Color.FromArgb(255, 74, 109);
-                        }
-                        else
-                        {
-                            checkList[Convert.ToInt32(pb.Name)][j].BackColor = BackColor = Color.FromArgb(225, 228, 255);
-                        }
-                    }
+                }
+                else
+                {
+                    checkList[Convert.ToInt32(pb.Name)][i].BackColor = BackColor = Color.FromArgb(225, 228, 255);
                 }
             }
         }
@@ -200,7 +196,7 @@ namespace CosmeticShop
         private void P_MouseLeave(object sender, EventArgs e)
         {
             var pb = (PictureBox)sender;
-            Product prd = db.Product.Find(idSearch[Convert.ToInt32(pb.Name)]);
+            Product prd = db.Product.Find(idList[Convert.ToInt32(pb.Name)]);
             mainImage[Convert.ToInt32(pb.Name)].BackgroundImage = Image.FromFile($@"..\..\{prd.MainImagePath}");
             counter = 1 + allImageList[Convert.ToInt32(pb.Name)].Count;
             for (int j = 0; j < counter; j++)
@@ -216,40 +212,75 @@ namespace CosmeticShop
             }
         }
 
-
-      
-
-        private void SearchText_KeyPress(object sender, KeyPressEventArgs e)
+        public void panelMove()
         {
-            
-        }
-
-        private void DropDown(object sender, EventArgs e)
-        {
+            int stringNum = 0;
             idSearch.Clear();
             for (int i = 0; i < idList.Count(); i++)
             {
-                if (allNameList[i].Contains($"{textBox1.Text}") == true)
+                mainImage[i].Hide();
+                name[i].Hide();
+                mainPanel[i].Hide();
+                for (int j = 0; j < checkList[i].Count(); j++)
                 {
-                        idSearch.Add(idList[i]);
+                    checkList[i][j].Hide();
                 }
             }
-            CreatePanel(idSearch);
+            for (int i = 0; i < idList.Count(); i++)
+            {
+                counter = 1;
+                counter += allImageList[i].Count;
+
+                if (allNameList[i].Contains($"{textBox1.Text}") == true)
+                {
+                    idSearch.Add(idList[i]);
+                    
+                    if ((idSearch.Count-1) / (3 * (stringNum + 1)) == 1)
+                    {
+                        stringNum++;
+                    }
+                    
+                    mainImage[i].Show();
+                    name[i].Show();
+                    mainPanel[i].Show();
+                    mainPanel[i].Location = new Point(100 + (250 * (idSearch.Count -1 - 3 * stringNum)), 50 + (Size.Height * stringNum / 5 * 3));
+                    mainImage[i].Location = new Point(mainPanel[i].Location.X + ((mainPanel[i].Width - 150) / 2), mainPanel[i].Location.Y + 10);
+                    name[i].Location = new Point(mainPanel[i].Location.X + ((mainPanel[i].Width - 150) / 2), (mainPanel[i].Location.Y + mainPanel[i].Height) - mainPanel[i].Height / 5 - 10);
+
+                    for (int j = 0; j < checkList[i].Count(); j++)
+                    {
+                        checkList[i][j].Show();
+                        checkList[i][j].Location = new Point((mainImage[i].Location.X + ((mainImage[i].Width - (30 * counter / 2)) / 2) + (30 * j) / 2), mainImage[i].Location.Y + mainImage[i].Height);
+                        
+                    }
+
+                }
+                label2.Text = $"{idSearch.Count} из {idList.Count}";
+            }
+
+        }
+
+      
+
+
+        private void DropDown(object sender, EventArgs e)
+        {
             
             
-            
+            panelMove();
             
         }
 
-        private void SearchText_KeyUp(object sender, KeyEventArgs e)
-        {
-            
+    }
 
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+    class Class234
+    {
+        Autorization auto = new Autorization();
+        public void Some()
         {
-            
+            auto.panelMove();
         }
     }
+
+ 
 }

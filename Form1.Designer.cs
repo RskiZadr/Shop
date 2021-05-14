@@ -61,8 +61,6 @@ namespace CosmeticShop
             this.textBox1.Size = new System.Drawing.Size(813, 21);
             this.textBox1.TabIndex = 2;
             this.textBox1.TextChanged += new System.EventHandler(this.DropDown);
-            this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchText_KeyPress);
-            this.textBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.SearchText_KeyUp);
             // 
             // label1
             // 
@@ -91,7 +89,6 @@ namespace CosmeticShop
             this.button1.TabIndex = 3;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // productBindingSource
             // 
@@ -133,11 +130,11 @@ namespace CosmeticShop
         #endregion
         private System.Windows.Forms.BindingSource productBindingSource;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
+        public System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        public System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label2;
+        public System.Windows.Forms.Label label2;
     }
 }
 
