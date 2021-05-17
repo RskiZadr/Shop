@@ -13,7 +13,7 @@ namespace CosmeticShop
 {
     public partial class Autorization : Form
     {
-        DataBase db { get; set; }
+        DataBase db = new DataBase();
 
         int counter;
 
@@ -38,8 +38,6 @@ namespace CosmeticShop
             InitializeComponent();
             FillIdlist();
             CreatePanel(idList);
-            new Autorization().db = new DataBase();
-
         }
 
         private void FillIdlist()
@@ -273,14 +271,4 @@ namespace CosmeticShop
 
     }
 
-    class Class234
-    {
-        Autorization auto = new Autorization();
-        public void Some()
-        {
-            auto.panelMove();
-        }
-    }
-
- 
 }
